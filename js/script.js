@@ -10,20 +10,17 @@ Array.prototype.include = function(o) {
   return false;
 }
 
-// 
+// Rounding helper. Will round down to the next 0.5 split below.
 function roundHalf(plat) {
-  if( ! parseFloat(plat) ) { return 0; }
+  if( ! parseFloat(plat) )
+    return 0;
     
   var decimal = plat - parseInt(plat);
     
-  // Round up to the nearest 0.5
-  if( decimal < 0.25 ) {
-	  return parseInt( plat );
-  } else if( decimal >= 0.25 && decimal < 0.75 ) {
-	  return parseFloat( parseInt( plat ) ) + 0.5;
-  } else if( decimal >= 0.75 ) {
-	  return parseInt( plat ) + 1;
-  }
+  if( decimal < 0.5 )
+    return parseInt( plat );
+  else if ( decimal >= 0.5 )
+    return parseFloat( parseInt( plat ) ) + 0.5;
 }
 
 function calculateSplit() {
@@ -82,8 +79,9 @@ function calculateSplit() {
   });
   
   // Split the deduction pool among members without deductions
-    result.even = roundHalf( result.pool / result.normal );
-  if(debug) { log("There is a total deduction buffer of " + result.pool + ", which makes " + result.pool + "/" + result.normal + "=" + result.even + "."); }
+  result.even = roundHalf( result.pool / result.normal + result.even );
+  if(debug) 
+    log("There is a total deduction buffer of " + result.pool + ", which makes " + result.pool + "/" + result.normal + "=" + result.even + ".");
   
   if(debug) { 
     var totalSplit = parseFloat(result.even) * parseFloat(result.normal);
@@ -94,19 +92,18 @@ function calculateSplit() {
   }
 
   // Parse output
-  output = "<h1>Calculus</h1><h2>Members with deductions</h2><ul>";
+  output = "<h1>Calculonicus!</h1><h2>Members with deductions</h2><ul>";
   $.each(result.deductions, function( index, value ) {
-	  output += "<li>" + value.name + " " + value.plat + " (-" + value.deduction + ").</li>";
+	  output += "<li>" + value.name + " <span class='number'>" + value.plat + "</span>pp (-" + value.deduction + ").</li>";
   });
   output += "</ul>";
   
-  output += "<h2>And everyone else gets...</h2><p><span class='number'>" + result.even + "pp!</span></p>";
+  output += "<h2>And everyone else gets...</h2><p><span class='number'>" + result.even + "</span>pp!</p>";
 
-  if(debug) {
+  if(debug)
 	  log( "" + result.deductions.length + " members with deductions.");
-  }
 
-  $("#results").html(output);
+  $("#results").addClass("output").html(output);
   
   // Store data in localStorage
   if( Modernizr.localstorage) {
@@ -131,7 +128,8 @@ $(function() {
 	}
 
 	if( !! localStorage.getItem( "coppersplit.data.plat" ) ) {
-	  if(debug) { log( "Loading platinum split data from localStorage" ); }
+	  if(debug)
+	    log( "Loading platinum split data from localStorage" );
     $( "input[name='plat']" ).val(parseFloat( localStorage.getItem( "coppersplit.data.plat" ) ) );
     $( "textarea[name='deductions']" ).val( localStorage.getItem( "coppersplit.data.deductions" ) );
     $( "input[name='members']" ).val(parseInt( localStorage.getItem( "coppersplit.data.members" ) ) );
@@ -139,6 +137,7 @@ $(function() {
 	  }
   }
 
+  // Bind the split calculation
   $("input[type='text']").blur(calculateSplit);
   $("textarea").blur(calculateSplit);
   $("form").submit(function(event) {
@@ -149,8 +148,8 @@ $(function() {
   // Dismiss the top help, store dismissal to localStorage
   $("#help a").click(function(e) {
 	  e.preventDefault();
-	  localStorage.setItem("coppersplit.help.dismissed", true);
-	  if(debug) { log("Setting help pane status, saving to localStorage"); }
+	  if(Modernizr.localstorage)
+	    localStorage.setItem("coppersplit.help.dismissed", true);
 	  $("#help").hide();
   });
 

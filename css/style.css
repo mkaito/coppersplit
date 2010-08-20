@@ -86,7 +86,7 @@ h1, h2, p { margin-bottom: 1.22em; }
     position: relative;
     background-color: #3f3f3f;
     color: white;
-    padding: 1em;
+    padding: 14px;
     margin-bottom: 3em;
     border-radius: 6px;
     -moz-border-radius: 6px;
@@ -116,6 +116,20 @@ form p input[type="submit"]:hover { border-width: 3px; padding: 14px; }
 
 form input[type="text"]:focus, form textarea:focus { border-width: 3px; border-color: #9fc; padding: 10px; }
 
+/* Output pane */
+#results h1 {
+  display:block; text-indent:-999em; overflow:hidden; background-repeat: no-repeat;
+  width: 320px; height: 38px; margin-bottom: 0.5em;
+  background: transparent url("images/results_header.png") no-repeat top center scroll;
+}
+#results h2 { margin-top: 1em; margin-bottom: 0.5em; }
+#results ul { list-style: none; margin: 0; padding: 0; }
+#results .number { font-size: 1.8em; font-weight: bold; }
+
+#results.output {
+  font-family: 'Jinky'; line-height: 140%; letter-spacing: 3px; text-rendering: optimizeLegibility; font-size: 2em;
+  text-align: center;
+}
 
 
 /* 
