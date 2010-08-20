@@ -28,16 +28,12 @@
       </header>
       <div id="main">
 	<div id="help">
-	    <p>Here's how you use this:</p>
-            <p>
-              First, work out who gets deductions, and write it down somewhere. Write the total amount of plat to be split into the "Platinum" field, in plat. For example, if you have 1432pp 50g, you write "1432.5" (that's a dot, not a comma). In the big text area, you'll write the names of whoever gets deductions, one per line, as the example shows. The deductions must be written in plat amounts preceded by a minus sign, and you can put multiple deductions per line. As soon as you click outside one of the fields, the results on the right will be updated.
-            </p>
-            <p>
-              You'll get back a list of the players you entered for deductions, the amount of plat each of these gets, and the amount of plat each of the other members get. You'll also get a calculation detail, in case you don't trust me, or want to keep it for log purposes.
-            </p>
-            <p>
-              Talking about logs... If you have a modern browser that supports Web Storage, each calculation log, the users, and their most recent deductions are saved locally in your browser, and will pop back when you open the page again. As the name suggests, it all happens locally in your browser. You can safely use this page offline, if you wish.
-            </p>
+	    <p>Welcome! Please take a few minutes to read this help frame. Once you're done, click the "dismiss" link at the bottom, and it won't come up ever again. There are just a few steps you need to remember, so don't worry.</p>
+	    <p>This application was made to help you split the plat across the guild, taking into account individual bonuses or penalties applied to guildies. Once you declare the total amount of coin, and the total number of members, you will need to type in the name of the members that have gained modifications in their split, either positive or negative. The application will keep tab on the global remainder and divide it among members without modifications.</p>
+	    <p>This means, of course, that if you deduct plat from someone, this plat will be split among everyone else. Also, if you decide to give someone a bonus for whatever reason, the extra amount is taken collectively from everyone else.</p>
+	    <p>As you can see by the example filled in below, the way you declare split modifications is pretty simple. You put in the name of the member followed by space-separated amounts, negative in this case. Each member needs to be on his own line. That's the only thing you need to remember.</p>
+      <p>The result pane on the right will be updated as you move around the fields. Additionally, you can click the "Calculate!" button at the bottom to force this to happen.</p>
+            
 	    <p><a href="#">Dismiss this frame</a></p>
 	</div>
 	<section id="form" class="clearfix">
@@ -49,14 +45,14 @@
 
             <p>
 	      <label>Deductions</label>
-	      <textarea name="deductions">Agustina -15 -2 -8 -12
-Vager -17 -8 -3 -1</textarea>
+	      <textarea name="deductions">Agustina -15 -2 -8 -12</textarea>
 	    </p>
 
 	    <p>
 	      <label>Total number of members to split plat among:</label>
 	      <input type="text" name="members" value="24" />
 	    </p>
+	    <p><input type="submit" name="submit" value="Calculate!" /></p>
 	  </form>
 	  <div id="results">
 	    <p>Once you do something in one of the fields on the left, and then click outside, you'll see this space updated with calculation results and details.</p>
@@ -71,8 +67,8 @@ Vager -17 -8 -3 -1</textarea>
   </div> <!-- end of #container -->
 
   <script src="js/json2.js"></script>
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-  <script>!window.jQuery && document.write('<script src="js/jquery-1.4.2.min.js"><\/script>')</script>
+  <!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> -->
+  <script src="js/jquery-1.4.2.min.js"></script>
   <script src="js/plugins.js?v=1"></script>
   <script src="js/script.js?v=1"></script>
 
@@ -80,8 +76,8 @@ Vager -17 -8 -3 -1</textarea>
     <script src="js/dd_belatedpng.js?v=1"></script>
   <![endif]-->
 
-  <script src="js/profiling/yahoo-profiling.min.js?v=1"></script>
-  <script src="js/profiling/config.js?v=1"></script>
+<!--  <script src="js/profiling/yahoo-profiling.min.js?v=1"></script>
+  <script src="js/profiling/config.js?v=1"></script>-->
 
 </body>
 </html>

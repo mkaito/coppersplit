@@ -109,7 +109,10 @@ form input[type="text"], form textarea {
     -moz-border-radius: 7px;
     -webkit-border-radius: 7px;
 }
+
 form input[type="text"] { font-size: 2em; text-align: right; }
+form p input[type="submit"] { width: 606px ! important; border-width: 1px; padding: 16px; }
+form p input[type="submit"]:hover { border-width: 3px; padding: 14px; }
 
 form input[type="text"]:focus, form textarea:focus { border-width: 3px; border-color: #9fc; padding: 10px; }
 
