@@ -22,9 +22,9 @@ if (dojo) {
             if ( !! localStorage["coppersplit.data.plat"] ) {
                 if (debug)
                     log("Loading platinum split data from localStorage");
-                $("input[name='plat']").val(parseFloat( localStorage["coppersplit.data.plat"] ));
-                $("textarea[name='deductions']").val( localStorage["coppersplit.data.deductions"] );
-                $("input[name='members']").val(parseInt( localStorage["coppersplit.data.members"] ));
+                $("input[name='plat']")[0].value = parseFloat( localStorage["coppersplit.data.plat"] );
+                $("textarea[name='deductions']")[0].value =  localStorage["coppersplit.data.deductions"] ;
+                $("input[name='members']")[0].value = parseInt( localStorage["coppersplit.data.members"] );
                 fireSplit();
             }
         } // if Modernizr
