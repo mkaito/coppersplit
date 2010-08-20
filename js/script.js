@@ -2,52 +2,156 @@
 
 */
 
-if(Modernizr.localstorage) {
-	// See if there are past log entries and load them
+// Just a handy array search method.
+Array.prototype.include = function(o) {
+  for(var i = 0; i < this.length; i++)
+	  if(this[i] === o)
+	    return true;
+  return false;
+}
+
+// 
+function roundHalf(plat) {
+  if( ! parseFloat(plat) ) { return 0; }
+    
+  var decimal = plat - parseInt(plat);
+    
+  // Round up to the nearest 0.5
+  if( decimal < 0.25 ) {
+	  return parseInt( plat );
+  } else if( decimal >= 0.25 && decimal < 0.75 ) {
+	  return parseFloat( parseInt( plat ) ) + 0.5;
+  } else if( decimal >= 0.75 ) {
+	  return parseInt( plat ) + 1;
+  }
+}
+
+function calculateSplit() {
+
+  var result         = { 'pool': 0 };
+
+  // Parse available coin and members
+  var platField      = $( "input[name='plat']"          );
+  var deductionField = $( "textarea[name='deductions']" );
+  var membersField   = $( "input[name='members']"       );
+  
+  var plat           = parseFloat( platField.val()  );
+  var members        = parseInt( membersField.val() );
+  var deductions     = deductionField.val().split( "\n" );
+
+  // Base split
+  var deductionPool  = 0;
+  var even           = plat / members;
+  result.even        = even;
+  result.normal      = members - deductions.length;
+  if (debug) { log("Total members: " + members + ". Members with deductions: " + deductions.length + ". Normal members: " + result.normal + "."); }
+
+  // Parse deductions
+  result.deductions  = [];
+  $.each( deductions, function(index, line) {
+
+  	var c = line.split(" ");
+  	var out = {'name': c[0], 'deduction': 0, 'plat': 0};
+  	
+  	// Calculate this member's deductions and add it to the total deduction pool
+  	$.each( c, function(index, deduction) {
+  	    if ( parseInt( deduction ) ) {
+  		    out.deduction += parseInt(deduction);
+  	    }
+  	});
+  	out.deduction *= -1
+  
+  	// Edge case: deduction > plat split.
+  	out.plat = roundHalf(( result.even - out.deduction ));
+  	if(out.plat < 0) {
+  	  out.plat = 0;
+  	  result.pool += result.even;
+  	} else {
+  	  result.pool += out.deduction;
+  	}
+  
+  	if(debug) {
+  	  log("Deductions for " + c[0] + ": " +
+  		parseInt(out.deduction) + ", so he gets " +
+  		roundHalf((result.even + out.deduction)) + "pp.");
+  	
+  	  log("Global deduction pool: " + result.pool);
+  	}
+  
+  	result.deductions.push(out);
+  });
+  
+  // Split the deduction pool among members without deductions
+    result.even = roundHalf( result.pool / result.normal );
+  if(debug) { log("There is a total deduction buffer of " + result.pool + ", which makes " + result.pool + "/" + result.normal + "=" + result.even + "."); }
+  
+  if(debug) { 
+    var totalSplit = parseFloat(result.even) * parseFloat(result.normal);
+    $.each(result.deductions, function( index, value) {
+      totalSplit += parseFloat(value.plat);
+    });
+    log("" + totalSplit + "pp used in the split, of " + plat + " that was available. We still have " + ( plat - totalSplit ) + " available.");
+  }
+
+  // Parse output
+  output = "<h1>Calculus</h1><h2>Members with deductions</h2><ul>";
+  $.each(result.deductions, function( index, value ) {
+	  output += "<li>" + value.name + " " + value.plat + " (-" + value.deduction + ").</li>";
+  });
+  output += "</ul>";
+  
+  output += "<h2>And everyone else gets...</h2><p><span class='number'>" + result.even + "pp!</span></p>";
+
+  if(debug) {
+	  log( "" + result.deductions.length + " members with deductions.");
+  }
+
+  $("#results").html(output);
+  
+  // Store data in localStorage
+  if( Modernizr.localstorage) {
+    localStorage["coppersplit.data.plat"] = platField.val();
+    localStorage["coppersplit.data.deductions"] = deductionField.val();
+    localStorage["coppersplit.data.members"] = membersField.val();
+  }
 }
 
 $(function() {
-    var calculateSplit = function() {
-	// Display a "loading" animation in the results window
+  // Load URL configuration
+  var options = window.location.search.replace("?", "").split("&");
+  window.debug = options.include("debug");
+  window.test = options.include("test");
+    
+  // Load settings from localStorage, if available.
+  if(Modernizr.localstorage) {
 
-	// Parse available coin and members
-	var output = "<h1>Calculus results:<h1>";
-	var plat = parseFloat($('form input[name="plat"]').value);
-	var membernum = parseInt($('form input[name="members"]').value);
-	// Base split
-	var even = plat / membernum;
-	output += "<p>Each member gets: " + even + "pp.</p>";
-
-	// Parse deductions
-	var memberLines = $('form textarea').html().split("\n");
-	var deductions = {};
-	var membersWithDeductions = memberLines.length;
-	
-	memberLines.each(function(memberline) {
-	    var c = memberline.split(" ");
-	    var o = { 'name': c[0] };
-	});
-	
-	// Remove "loading" animation and display results
-	$("#results").html(output);
-    };
-
-    // Load stuff from localStorage, if available.
-    if(Modernizr.localstorage) {
-	if(localStorage.getItem("coppersplit.help.dismissed")) {
-	    log("Loading help pane status from localStorage");
-	    $("#help").hide();
+	if( localStorage.getItem( "coppersplit.help.dismissed" ) == "true" ) {
+	  log( "Loading help pane status from localStorage" );
+	  $( "#help" ).hide();
 	}
-    }
 
-    $("input[type='text']").blur(calculateSplit);
-    $("textarea").blur(calculateSplit);
+	if( !! localStorage.getItem( "coppersplit.data.plat" ) ) {
+	  if(debug) { log( "Loading platinum split data from localStorage" ); }
+    $( "input[name='plat']" ).val(parseFloat( localStorage.getItem( "coppersplit.data.plat" ) ) );
+    $( "textarea[name='deductions']" ).val( localStorage.getItem( "coppersplit.data.deductions" ) );
+    $( "input[name='members']" ).val(parseInt( localStorage.getItem( "coppersplit.data.members" ) ) );
+    calculateSplit();
+	  }
+  }
 
-    // Dismiss the top help, store dismissal to localStorage
-    $("#help a").click(function(e) {
-	e.preventDefault();
-	localStorage.setItem("coppersplit.help.dismissed", true);
-	log("Setting help pane status, saving to localStorage");
-	$("#help").hide();
-    });
+  $("input[type='text']").blur(calculateSplit);
+  $("textarea").blur(calculateSplit);
+  $("form").submit(function(event) {
+    event.preventDefault();
+    calculateSplit();
+  });
+
+  // Dismiss the top help, store dismissal to localStorage
+  $("#help a").click(function(e) {
+	  e.preventDefault();
+	  localStorage.setItem("coppersplit.help.dismissed", true);
+	  if(debug) { log("Setting help pane status, saving to localStorage"); }
+	  $("#help").hide();
+  });
+
 });
