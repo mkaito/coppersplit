@@ -14,7 +14,7 @@ if (dojo) {
         // Load settings from localStorage, if available.
         if (Modernizr.localstorage) {
 
-            if (! localStorage["coppersplit.help.not.seen"] ) {
+            if (! localStorage["coppersplit.hide.help"] ) {
                 log("Help pane hasn't been seen. Displaying.");
                 $("#help").style('display', 'block');
             }
@@ -71,7 +71,7 @@ if (dojo) {
         $("#help a").onclick(function(event) {
             dojo.stopEvent(event);
             if (Modernizr.localstorage)
-                localStorage["coppersplit.help.not.seen"] = false;
+                localStorage["coppersplit.hide.help"] = true;
             $("#help").style('display', 'none');
         });
     });
