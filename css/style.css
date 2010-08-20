@@ -77,7 +77,8 @@ button {  width: auto; overflow: visible; }
 */
 
 /* Layout & Measure */
-h1 { font-size: 2em; text-align: center; }
+h1, h2 { font-size: 2em; text-align: center; }
+h2 {font-size: 1.2em; margin-top: -1em;}
 #container { width: 960px; margin: 0 auto; }
 h1, h2, p { margin-bottom: 1.22em; }
 
@@ -131,6 +132,11 @@ form input[type="text"]:focus, form textarea:focus { border-width: 3px; border-c
   text-align: center;
 }
 
+/* Footer */
+footer {
+  text-align: center;
+  font-size: 0.8em;
+}
 
 /* 
  * print styles

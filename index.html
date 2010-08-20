@@ -5,7 +5,7 @@
   <!--[if IE]><![endif]-->
 
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <title>Coppersplit</title>
+  <title>Coppersplit Calculonicus!</title>
   <meta name="description" content="A coin split calculator that takes into account any per-member penalizations">
   <meta name="author" content="Michishige Kaito">
   <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0;">
@@ -25,45 +25,46 @@
 
   <div id="container">
     <header>
-        <h1>Coppersplit :: HTML5 Coin splitter for EQ2</h1>
-      </header>
-      <div id="main">
-	<div id="help">
-	    <p>Welcome! Please take a few minutes to read this help frame. Once you're done, click the "dismiss" link at the bottom, and it won't come up ever again. There are just a few steps you need to remember, so don't worry.</p>
-	    <p>This application was made to help you split the plat across the guild, taking into account individual bonuses or penalties applied to guildies. Once you declare the total amount of coin, and the total number of members, you will need to type in the name of the members that have gained modifications in their split, either positive or negative. The application will keep tab on the global remainder and divide it among members without modifications.</p>
-	    <p>This means, of course, that if you deduct plat from someone, this plat will be split among everyone else. Also, if you decide to give someone a bonus for whatever reason, the extra amount is taken collectively from everyone else.</p>
-	    <p>As you can see by the example filled in below, the way you declare split modifications is pretty simple. You put in the name of the member followed by space-separated amounts, negative in this case. Each member needs to be on his own line. That's the only thing you need to remember.</p>
-      <p>The result pane on the right will be updated as you move around the fields. Additionally, you can click the "Calculate!" button at the bottom to force this to happen.</p>
+        <h1>Coppersplit Calculonicus</h1>
+        <h2>HTML5 Coin Split Calculator</h2>
+    </header>
+    <div id="main">
+	    <div id="help">
+	      <p>Welcome! Please take a few minutes to read this help frame. Once you're done, click the "dismiss" link at the bottom, and it won't come up ever again. There are just a few steps you need to remember, so don't worry.</p>
+	      <p>This application was made to help you split the plat across the guild, taking into account individual bonuses or penalties applied to guildies. Once you declare the total amount of coin, and the total number of members, you will need to type in the name of the members that have gained modifications in their split, either positive or negative. The application will keep tab on the global remainder and divide it among members without modifications.</p>
+	      <p>This means, of course, that if you deduct plat from someone, this plat will be split among everyone else. Also, if you decide to give someone a bonus for whatever reason, the extra amount is taken collectively from everyone else.</p>
+	      <p>As you can see by the example filled in below, the way you declare split modifications is pretty simple. You put in the name of the member followed by space-separated amounts, negative in this case. Each member needs to be on his own line. That's the only thing you need to remember.</p>
+        <p>The result pane on the right will be updated as you move around the fields. Additionally, you can click the "Calculate!" button at the bottom to force this to happen.</p>
             
-	    <p><a href="#">Dismiss this frame</a></p>
-	</div>
-	<section id="form" class="clearfix">
-          <form action="coppersplit.php" method="post" accept-charset="utf-8">
-            <p>
-	      <label>Total coin, platinum:</label>
-	      <input type="text" name="plat" value="1432.50" />
-	    </p>
-
-            <p>
-	      <label>Deductions</label>
-	      <textarea name="deductions">Agustina -15 -2 -8 -12</textarea>
-	    </p>
-
-	    <p>
-	      <label>Total number of members to split plat among:</label>
-	      <input type="text" name="members" value="24" />
-	    </p>
-	    <p><input type="submit" name="submit" value="Calculate!" /></p>
-	  </form>
-	  <div id="results">
-	    <p>Once you do something in one of the fields on the left, and then click outside, you'll see this space updated with calculation results and details.</p>
-	    <p>The data you entered will be saved locally in your browser, so the next time you come around you don't have to type it all in again.</p>
+	      <p><a href="#">Dismiss this frame</a></p>
 	  </div>
-	</section>
-      </div> <!-- end of #main -->
+	  <section id="form" class="clearfix">
+       <form action="coppersplit.php" method="post" accept-charset="utf-8">
+          <p>
+	          <label>Total coin, platinum:</label>
+	          <input type="text" name="plat" value="1432.50" />
+	        </p>
+
+          <p>
+	          <label>Deductions</label>
+	          <textarea name="deductions">Agustina -15 -2 -8 -12</textarea>
+	        </p>
+
+	        <p>
+	          <label>Total number of members to split plat among:</label>
+	          <input type="text" name="members" value="24" />
+	        </p>
+	        <p><input type="submit" name="submit" value="Calculate!" /></p>
+	      </form>
+	      <div id="results">
+	        <p>Once you do something in one of the fields on the left, and then click outside, you'll see this space updated with calculation results and details.</p>
+	        <p>The data you entered will be saved locally in your browser, so the next time you come around you don't have to type it all in again.</p>
+	      </div>
+	    </section>
+    </div> <!-- end of #main -->
     
     <footer>
-      <p>This hot stuff was made by Michishige<b>Kaito</b>. I don't care about copyright, but don't be an ass, alright?.</p>
+      <p>This hot stuff was made by <a href="htt://mkaito.github.com/">Michishige<b>Kaito</b></a>. I don't care about copyright, but don't be an ass, alright?.</p>
     </footer>
   </div> <!-- end of #container -->
 
