@@ -11,24 +11,6 @@ if (dojo) {
         window.debug = options.include("debug");
         window.test = options.include("test");
 
-        // Load settings from localStorage, if available.
-        if (Modernizr.localstorage) {
-
-            if (! localStorage["coppersplit.hide.help"] ) {
-                log("Help pane hasn't been seen. Displaying.");
-                $("#help").style('display', 'block');
-            }
-
-            if ( !! localStorage["coppersplit.data.plat"] ) {
-                if (debug)
-                    log("Loading platinum split data from localStorage");
-                $("input[name='plat']")[0].value = parseFloat( localStorage["coppersplit.data.plat"] );
-                $("textarea[name='deductions']")[0].value =  localStorage["coppersplit.data.deductions"] ;
-                $("input[name='members']")[0].value = parseInt( localStorage["coppersplit.data.members"] );
-                fireSplit();
-            }
-        } // if Modernizr
-        
         // Gather the data and display the calculations
         var fireSplit = function() {
             // Parse available coin and members
@@ -66,6 +48,24 @@ if (dojo) {
             dojo.stopEvent(event);
             fireSplit();
         });
+        
+        // Load settings from localStorage, if available.
+        if (Modernizr.localstorage) {
+
+            if (! localStorage["coppersplit.hide.help"] ) {
+                log("Help pane hasn't been seen. Displaying.");
+                $("#help").style('display', 'block');
+            }
+
+            if ( !! localStorage["coppersplit.data.plat"] ) {
+                if (debug)
+                    log("Loading platinum split data from localStorage");
+                $("input[name='plat']")[0].value = parseFloat( localStorage["coppersplit.data.plat"] );
+                $("textarea[name='deductions']")[0].value =  localStorage["coppersplit.data.deductions"] ;
+                $("input[name='members']")[0].value = parseInt( localStorage["coppersplit.data.members"] );
+                fireSplit();
+            }
+        } // if Modernizr
 
         // Dismiss the top help, store dismissal to localStorage
         $("#help a").onclick(function(event) {
