@@ -28,6 +28,15 @@ if (dojo) {
             output += "</ul>";
 
             output += "<h2>And everyone else gets...</h2><p><span class='number'>" + result.even + "</span>pp!</p>";
+            
+            var totalSplit = 0;
+            dojo.forEach(result.deductions, function(d) {
+                totalSplit += d.plat;
+            });
+            totalSplit += result.normal * result.even;
+            var remainder = plat - totalSplit;
+            
+            output += "<h2>While the bank gets...</h2><p><span class='number'>" + remainder + "</span>pp back.";
 
             if (debug)
                 log("" + result.deductions.length + " members with deductions.");
