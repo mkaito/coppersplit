@@ -1,87 +1,71 @@
 /* Author: Michishige Kaito
-
+   Requires MooTools 1.4.2
 */
-if (dojo) {
-    d = dojo;
-    $ = d.query;
 
-    dojo.addOnLoad(function() {
-        // Load URL configuration
-        var options = window.location.search.replace("?", "").split("&");
-        window.debug = options.include("debug");
-        window.test = options.include("test");
-
-        // Gather the data and display the calculations
-        var fireSplit = function() {
-            // Parse available coin and members
-            var plat = parseFloat($("input[name='plat']")[0].value);
-            var members = parseInt($("input[name='members']")[0].value);
-            var deductions = $("textarea[name='deductions']")[0].value.split("\n");
-
-            var result = splitPlat(plat, members, deductions);
-
-            // Parse output
-            output = "<h1>Calculonicus!</h1><h2>Have been naughty...</h2><ul>";
-            d.forEach(result.deductions, function(value) {
-                output += "<li>" + value.name + " <span class='number'>" + value.plat + "</span>pp (" + value.deduction + ").</li>";
-            });
-            output += "</ul>";
-
-            output += "<h2>And everyone else gets...</h2><p><span class='number'>" + result.even + "</span>pp!</p>";
-            
-            var totalSplit = 0;
-            dojo.forEach(result.deductions, function(d) {
-                totalSplit += d.plat;
-            });
-            totalSplit += result.normal * result.even;
-            var remainder = plat - totalSplit;
-            
-            output += "<h2>While the bank gets...</h2><p><span class='number'>" + remainder + "</span>pp back.";
-
-            if (debug)
-                log("" + result.deductions.length + " members with deductions.");
-
-            $("#results")[0].innerHTML = output;
-
-            // Store data in localStorage
-            if (Modernizr.localstorage) {
-                localStorage["coppersplit.data.plat"] = plat;
-                localStorage["coppersplit.data.deductions"] = deductions;
-                localStorage["coppersplit.data.members"] = members;
-            }
-        }; // fireSplit
-        
-        // Hook up events to fire the calculation
-        $("input, textarea").onblur(fireSplit).onclick(fireSplit);
-        $("form").onsubmit(function(event) {
-            dojo.stopEvent(event);
-            fireSplit();
-        });
-        
-        // Load settings from localStorage, if available.
-        if (Modernizr.localstorage) {
-
-            if (! localStorage["coppersplit.hide.help"] ) {
-                log("Help pane hasn't been seen. Displaying.");
-                $("#help").style('display', 'block');
-            }
-
-            if ( !! localStorage["coppersplit.data.plat"] ) {
-                if (debug)
-                    log("Loading platinum split data from localStorage");
-                $("input[name='plat']")[0].value = parseFloat( localStorage["coppersplit.data.plat"] );
-                $("textarea[name='deductions']")[0].value =  localStorage["coppersplit.data.deductions"] ;
-                $("input[name='members']")[0].value = parseInt( localStorage["coppersplit.data.members"] );
-                fireSplit();
-            }
-        } // if Modernizr
-
-        // Dismiss the top help, store dismissal to localStorage
-        $("#help a").onclick(function(event) {
-            dojo.stopEvent(event);
-            if (Modernizr.localstorage)
-                localStorage["coppersplit.hide.help"] = true;
-            $("#help").style('display', 'none');
-        });
+window.addEvent('domready', function(){
+    
+    var coppersplit = new Coppersplit({
+        total: $$("input[name='plat']")[0],
+        mods: $$("textarea[name='deductions']")[0],
+        members: $$("input[name='members']")[0]
     });
-}
+    
+    var template = $("results").compile({
+        'ul li': {
+            'mod <- mods': {
+                '.': '#{mod.name} <span class="number">#{mod.plat}</span>pp (#{mod.modstr})'
+            }
+        },
+        'p.even span.number': 'even',
+        'p.bank span.number': 'remainder'
+    });
+    
+    var calculate = function() {
+	log("Calculation event fired", $time());
+        var data = coppersplit.calculate();
+        $("results").render(data, template);
+	log("Data parsed", data);
+	
+	if(Modernizr.localstorage) {
+	    log("Storing calculation data");
+	    localStorage["coppersplit.data"] = JSON.stringify({
+		plat    : $$("input[name='plat']")[0].value,
+		mods    : $$("textarea[name='deductions']")[0].value,
+		members : $$("input[name='members']")[0].value
+	    });
+	}
+    };
+    
+    // Hook up events
+    $$("input").addEvent('blur', calculate);
+    $$("textarea").addEvent('blur', calculate);
+    $$("form").addEvent('submit', function(e) {
+        calculate();
+        return false;
+    });
+
+    $$("#help a").addEvent("click", function(e) {
+	log("Hiding help pane");
+	this.getParent().getParent().setStyle('display', 'none');
+	if(Modernizr.localstorage) localStorage["coppersplit.hide.help"] = true;
+	return false;
+    });
+
+    // Handle Web Storage
+    if(Modernizr.localstorage) {
+	// Help pane display
+	if(! localStorage["coppersplit.hide.help"] ) {
+	    $('help').setStyle('display', 'block');
+	    log("Help has not been dismissed. Displaying.");
+	}
+
+	if(!! localStorage["coppersplit.data"] ) {
+	    log("Stored calculation data found. Filling form.");
+	    var data = JSON.parse(localStorage["coppersplit.data"]);
+	    
+            $$("input[name='plat']")[0].value = data.plat;
+            $$("textarea[name='deductions']")[0].value = data.mods;
+            $$("input[name='members']")[0].value = data.members;
+	}
+    }
+});
