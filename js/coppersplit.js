@@ -113,7 +113,12 @@ var Coppersplit = new Class({
 	// Redistribute deducted coin
 	if(this.options.redistribute && result.mods.length) {
 	    result.mods.each(function(mod){
-		result.pool = mod.negative ? result.pool + mod.mod : result.pool - mod.mod;
+		if(mod.plat < 0) {
+		    mod.plat = 0;
+		    result.pool += result.even;
+		} else {
+		    result.pool = mod.negative ? result.pool + mod.mod : result.pool - mod.mod;
+		}
 	    });
 
 	    result.even += roundHalf(result.pool / result.nice);
