@@ -1,0 +1,163 @@
+@import base
+@import compass/reset
+@import blueprint/typography
+@import blueprint/form
+
++blueprint-typography
++blueprint-form
+
+/* Utility
+.ir
+  display: block
+  text-indent: -999em
+  overflow: hidden
+  background-repeat: no-repeat
+
+.hidden
+  display: none
+  visibility: hidden
+
+.visuallyhidden
+  position: absolute !important
+  clip: rect(1px 1px 1px 1px)
+  clip: rect(1px, 1px, 1px, 1px)
+
+.invisible
+  visibility: hidden
+
+.clearfix:after
+  content: "."
+  display: block
+  height: 0
+  clear: both
+  visibility: hidden
+
+.clearfix
+  display: inline-block
+
+* html .clearfix
+  height: 1%
+
+.clearfix
+  display: block
+
+/* Layout & Measure
+h1, h2
+  font-size: 2em
+  text-align: center
+
+h2
+  font-size: 1.2em
+  margin-top: -1em
+
+#container
+  width: 960px
+  margin: 0 auto
+
+h1, h2, p
+  margin-bottom: 1.22em
+
+/* Help pane on top
+#help, #results
+  position: relative
+  background-color: #3f3f3f
+  color: white
+  padding: 14px
+  margin-bottom: 3em
+  border-radius: 6px
+  -moz-border-radius: 6px
+  -webkit-border-radius: 6px
+  background: #3f3f3f url(data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IGZpbGw9IiNGRkYiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiLz48cmVjdCBmaWxsPSIjM2YzZjNmIiByeD0iNiIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIvPjwvc3ZnPg==)
+
+#help
+  display: none
+
+html.no-js #help
+  display: block
+
+html.no-js #help a
+  display: none
+
+/* The input form
+section#form form
+  display: block
+  width: 600px
+  float: left
+
+section#form #results
+  width: 320px
+  margin-top: 35px
+  float: right
+
+section#form form input
+  width: 580px
+
+section#form form textarea
+  width: 580px
+  height: 350px
+
+form label
+  display: block
+
+form input[type="text"], form textarea
+  padding: 12px
+  border: 1px solid black
+  border-radius: 7px
+  -moz-border-radius: 7px
+  -webkit-border-radius: 7px
+
+form input[type="text"]
+  font-size: 2em
+  text-align: right
+
+form p input[type="submit"]
+  width: 606px !important
+  border-width: 1px
+  padding: 16px
+
+form p input[type="submit"]:hover
+  border-width: 3px
+  padding: 14px
+
+form input[type="text"]:focus, form textarea:focus
+  border-width: 3px
+  border-color: #9fc
+  padding: 10px
+
+/* Output pane
+#results h1
+  display: block
+  text-indent: -999em
+  overflow: hidden
+  background-repeat: no-repeat
+  width: 320px
+  height: 38px
+  margin-bottom: 0.5em
+  background: transparent url("images/results_header.png") no-repeat top center scroll
+
+#results h2
+  margin-top: 1em
+  margin-bottom: 0.5em
+  color: white
+
+#results ul
+  list-style: none
+  margin: 0
+  padding: 0
+
+#results .number
+  font-size: 1.8em
+  font-weight: bold
+
+#results
+  font-family: 'Jinky'
+  line-height: 140%
+  letter-spacing: 3px
+  text-rendering: optimizeLegibility
+  font-size: 2em
+  text-align: center
+
+/* Footer
+footer
+  text-align: center
+  font-size: 0.8em

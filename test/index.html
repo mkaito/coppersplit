@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>QUnit Tests</title>
+	<link rel="stylesheet" href="http://github.com/jquery/qunit/raw/master/qunit/qunit.css" media="screen">
+
+<!-- reference your own javascript files here -->
+
+  <script src="../js/lib/modernizr-1.5.min.js"></script>
+  
+  <script src="../js/lib/json2.js"></script>
+  <script src="../js/lib/mootools-1.2.4-core.js"></script>
+  <script src="../js/lib/pure.js"></script>
+
+  <script src="../js/coppersplit.js?v=1"></script>
+  <script src="../js/plugins.js?v=1"></script>
+  <script src="../js/script.js?v=1"></script>
+
+  <!-- test runner files -->
+	<script src="http://github.com/jquery/qunit/raw/master/qunit/qunit.js"></script>
+	<script src="tests.js"></script>
+
+</head>
+<body class="flora">
+	<h1 id="qunit-header">QUnit Test Suite</h1>
+	<h2 id="qunit-banner"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
+	<div id="qunit-fixture">
+	  <form action="coppersplit.php" method="post" accept-charset="utf-8">
+      <p>
+        <label>Total coin, platinum:</label>
+        <input type="text" id="plat" value="1432.50" />
+      </p>
+
+      <p>
+        <label>Deductions</label>
+        <textarea id="mods">Agustina -15 -2 -8 -12</textarea>
+      </p>
+
+      <p>
+        <label>Total number of members to split plat among:</label>
+        <input type="text" id="members" value="24" />
+      </p>
+      <p><input type="submit" id="submit" value="Calculate!" /></p>
+    </form>
+  </div>
+</body>
+</html>

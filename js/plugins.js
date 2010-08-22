@@ -13,9 +13,9 @@ function roundHalf(plat) {
 
 window.log = function() {
     // Log only works if foobar.com/baz?debug
-    if( ! window.location.search.replace("?", "").split("&").contains("debug") ) return false;
     log.history = log.history || [];
     log.history.push(arguments);
+    if( ! window.location.search.replace("?", "").split("&").contains("debug") ) return false;
     if (this.console) console.log(Array.prototype.slice.call(arguments));
 };
 
