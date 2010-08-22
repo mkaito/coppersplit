@@ -11,6 +11,15 @@ function roundHalf(plat) {
     return parseFloat(parseInt(plat)) + 0.5;
 }
 
+// Mootools Hash length helper
+Hash.prototype.length = function() {
+  var length = 0;
+  this.each(function(){
+    length++;
+  });
+  return length;
+};
+
 window.log = function() {
     // Log only works if foobar.com/baz?debug
     log.history = log.history || [];

@@ -12,7 +12,7 @@ window.addEvent('domready', function(){
     
     var template = $("results").compile({
         'ul li': {
-            'mod <- mods': {
+            'mod <- mods.array': {
                 '.': '#{mod.name} <span class="number">#{mod.plat}</span>pp (#{mod.modstr})'
             }
         },

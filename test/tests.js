@@ -3,23 +3,82 @@
 
 module("roundHalf");
 
-
 module("Coppersplit");
-test("Accepts regular data as arguments", function() {
+test("Ignores comments", function(){
+    // See if we can split em off at mod-parse time
+    var coppersplit = new Coppersplit({
+        total: 4237,
+        members: 24,
+        mods: 'Agustina -17 // He been naughty'
+    });
+    coppersplit.gather();
+
+    deepEqual(coppersplit.mods['agustina'],
+	      ['-17'],
+	      "Ignores trailing comments");
+
     coppersplit = new Coppersplit({
         total: 4237,
         members: 24,
-        mods: [{name: 'Agustina', mods: '-17'}]
+        mods: "//He been naughty\nAgustina -17"
+    });
+    coppersplit.gather();
+
+    deepEqual(coppersplit.mods['agustina'],
+	      ['-17'],
+	      "Ignores line comments");
+});
+
+test("Multiple lines for the same user are merged", function(){
+    // Will have to look into Hash manipulation
+    // to use the name as identifier
+    //
+    // a = "agustina"
+    // hash = {'agustina': 'foo'}
+    // hash[a] // => 'foo'
+    //
+    // mods = {
+    //     'agustina': ['-17', '-30%'],
+    //     'aager': ['-2']
+    //     }
+    //
+    // name = 'Agustina'.toLowerCase()
+    // mods[name].push("-40", "-12%");
+    //
+    // mods.each(function(mods, name) {});
+    var coppersplit = new Coppersplit({
+      total: 4237,
+      members: 24,
+      mods: 'Agustina -17\nAgustina -3'
+    });
+    coppersplit.gather();
+
+    deepEqual(coppersplit.mods["agustina"],
+      ['-17', '-3'],
+      "It merges multiple lines to the same identifier");
+
+
+});
+
+test("Accepts regular data as arguments", function() {
+    var coppersplit = new Coppersplit({
+        total: 4237,
+        members: 24,
+        mods: ['Agustina -17']
     });
     coppersplit.gather();
     
-    equal(coppersplit.total, 4237, "Should read total coin");
-    equal(coppersplit.members, 24, "Should read members number");
-    deepEqual(coppersplit.mods, [{name: 'Agustina', mods: '-17'}], "Should read mods");
+    equal(coppersplit.total, 4237,
+	  "Should read total coin");
+    equal(coppersplit.members, 24,
+	  "Should read members number");
+    deepEqual(coppersplit.mods['agustina'],
+	      ['-17'],
+	      "Should read mods");
 });
 
 test("Accepts Elements as arguments", function(){
-    coppersplit = new Coppersplit({
+    var coppersplit = new Coppersplit({
         total: $("plat"),
         members: $("members"),
         mods: $("mods")
@@ -28,55 +87,50 @@ test("Accepts Elements as arguments", function(){
     
     equal(coppersplit.total, 1432.50, "Should read total coin");
     equal(coppersplit.members, 24, "Should read members number");
-    deepEqual(coppersplit.mods, [{name: 'Agustina', mods: '-15 -2 -8 -12'}], "Should read mods");
+    deepEqual(coppersplit.mods['agustina'],
+      ['-15', '-2', '-8', '-12'],
+      "Should read mods");
 });
 
-test("Calculations", function(){
-    coppersplit = new Coppersplit({
+test("Calculating the split with no mods", function(){
+    var coppersplit = new Coppersplit({
         total: 2000,
         members: 2,
         mods: null
     });
-    
-    deepEqual(coppersplit.calculate(), {
-        "pool": 0,
-        "total": 2000,
-        "remainder": 0,
-        "even": 1000,
-        "naughty": 0,
-        "nice": 2,
-         "mods": []
-         }, "Correctly calculates with no mods");
 
+    var result = coppersplit.calculate();
+    equal(result['even'], 1000, "Correctly calculates the split");
+    
+});
+test("Calculating the split with one mod line and one mod", function() {
     coppersplit = new Coppersplit({
         total: 2000,
         members: 2,
-        mods: [{name: 'Agustina', mods: '-17'}]
+        mods: ['Agustina -17']
     });
     
-    deepEqual(coppersplit.calculate(), {
-        "pool": 17, "total": 2000, "remainder": 0,
-        "even": 1017, "naughty": 1, "nice": 1,
-        "mods": [{
-            "name": "Agustina", "mod": 17,
-            "negative": true, "modstr": "-17",
-            "plat": 983 }]
-        }, "Correctly calculates with a single mod line and a single mod");
-
+    var result = coppersplit.calculate();
+    equal(result['pool'], 17, "Correctly calculates the global mod");
+    equal(result['even'], 1017, "Correctly calculates the even split");
+    deepEqual(result['mods']['agustina']['mods'], ["-17"], "Correctly detects the mods");
+    equal(result['mods']['agustina']['plat'], 983, "Correctly applies the mods");
+});
+test("Calculating the split with one mod line and multiple mods", function() {
     coppersplit = new Coppersplit({
         total: 2000,
         members: 2,
-        mods: [{name: 'Agustina', mods: '-17 -15 -20 -145 -5'}]
+        mods: 'Agustina -17 -15 -20% -145 -5'
     });
-    
-    deepEqual(coppersplit.calculate(), {
-        "pool": 202, "total": 2000, "remainder": 0,
-        "even": 1202, "naughty": 1, "nice": 1,
-        "mods": [{
-            "name": "Agustina", "mod": 202,
-            "negative": true, "modstr": "-202",
-            "plat": 798 }]
-        }, "Correctly calculates with a single mod line and a multiple chained mods");
+    var result = coppersplit.calculate();
+
+    equal(result['pool'], 382, "Correctly calculates the global mod");
+    equal(result['even'], 1382, "Correctly calculates the even split");
+    deepEqual(result['mods']['agustina']['mods'],
+      [ "-17", "-15", "-20%", "-145", "-5" ],
+      "Correctly detects the mods");
+    equal(result['mods']['agustina']['plat'], 618, "Correctly applies the mods");
+    equal(result['remainder'], 0, "Correctly calculates the remainder")
 });
 
 module("Plugins");

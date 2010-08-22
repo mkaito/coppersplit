@@ -13,28 +13,42 @@ var Coppersplit = new Class({
         this.setOptions(options);
     },
 
+    parseModLine: function(line) {
+      // Dismiss comment lines
+      if( line.match(/^\/\//) ) return null;
+
+      // Dismiss empty lines
+      if( line.trim() == "" ) return null;
+      
+      // Dismiss trailing comments
+      if( line.match(/\/\//) ) line = line.split("//")[0];
+
+      // Clean up
+      line = line.trim().replace(/\s+/g, " ");
+
+      var components = line.split(" ");
+
+      var identifier = components.shift().toLowerCase();
+      if( ! this.mods[identifier] ) this.mods[identifier] = [];
+      components.each(function(v){
+        this.mods[identifier].push(v);
+      }, this);
+      this.mods[identifier].flatten();
+    },
+
     parseModField: function(input) {
-        return input
+      if($type(input) == "string") {
+        input = input
         // Split on newlines...
-        .split("\n")
+          .split("\n")
         // ... and commas.
-        .map(function(m) {
-            return m.split(",")
-        })
-        .flatten()
-        // Merge multiple consecutive spaces.
-        .map(function(v) {
-            return v.replace(/\s+/g, " ");
-        })
-        // And finally, construct the argument object,
-        // making sure to get rid of any remnant extra space around the string.
-        .map(function(m) {
-            var components = m.trim().split(" ");
-            return {
-                'name': components.shift(),
-                'mods': components.join(" ")
-            };
-        });
+          .map(function(m) {
+              return m.split(",")
+          })
+          .flatten()
+      }
+      this.mods = $H({});
+      input.map(this.parseModLine, this);
     },
 
 
@@ -44,9 +58,9 @@ var Coppersplit = new Class({
        this.members = 32;
        this.mods    =
        [
-       {'name': "Agustina", 'mods': '-15% -2 * 3'}, // Complex combinations
-       {'name': "Vager", 'mods': '-750'},           // Massive deduction
-       {'name': "Catherin", 'mods': '-7'}           // Simple
+        {"agustina": '-15% -2 * 3'}, // Complex combinations
+        {"vager": '-750'},           // Massive deduction
+        {"catherin": '-7'}           // Simple
        ];
     */
     /* Returned JSON, usable by PURE.
@@ -72,23 +86,22 @@ var Coppersplit = new Class({
             total: 0,
             remainder: 0,
             even: roundHalf(this.total / this.members),
-            naughty: this.mods.length,
-            nice: this.members - this.mods.length,
+            naughty: $H(this.mods).getLength(),
+            nice: this.members - $H(this.mods).getLength(),
             mods: []
         };
 
-        result.mods = this.mods.map(function(mod) {
-            var out = {
-                'name': mod.name
-            };
-
+        result.mods = $H({'array': []});
+        this.mods.each(function(mod, identifier){
+            var out = {'mods': mod, 'name': identifier};
+            mod = mod.join(" ");
             // If it doesn't match the whitelist, return 0.
             var mathwhitelist = /^[\d\s\+\-\*\%]+$/;
-            if (!mathwhitelist.test(mod.mods)) return 0;
+            if (!mathwhitelist.test(mod)) return null;
 
             // Replace any percentages with their values
             var percentageRE = /([\+\-])?(\d{1,3})\%/g;
-            var percentages = mod.mods.match(percentageRE);
+            var percentages = mod.match(percentageRE);
             if (percentages) {
                 var percentageValues = percentages.map(function(p) {
 
@@ -102,27 +115,31 @@ var Coppersplit = new Class({
                 });
 
                 percentages.each(function(p, i) {
-                    mod.mods = mod.mods.replace(p, percentageValues[i]);
+                    mod = mod.replace(p, percentageValues[i]);
                 });
             }
 
-            out.mod = eval(mod.mods);
-            out.negative = out.mod < 0 ? true: false;
+            out.mod = eval(mod);
+            out.negative = out.mod < 0;
             if (out.negative) out.mod *= -1;
             out.modstr = out.negative ? "-" + out.mod: "+" + out.mod;
-            out.plat = roundHalf(out.negative ? result.even - out.mod: result.even + out.mod);
+            out.plat = roundHalf(
+                out.negative ? result.even - out.mod : result.even + out.mod);
 
-            return out;
+            result.mods[identifier] = out;
+            result.mods.array.push(out);
         });
 
         // Redistribute deducted coin
-        if (this.options.redistribute && result.mods.length) {
-            result.mods.each(function(mod) {
-                if (mod.plat < 0) {
-                    mod.plat = 0;
-                    result.pool += result.even;
-                } else {
-                    result.pool = mod.negative ? result.pool + mod.mod: result.pool - mod.mod;
+        if (this.options.redistribute) {
+            result.mods.each(function(mod, key) {
+                if(key != "array"){
+                 if (mod.plat < 0) {
+                      mod.plat = 0;
+                      result.pool += result.even;
+                  } else {
+                      result.pool = mod.negative ? result.pool + mod.mod : result.pool - mod.mod;
+                  }
                 }
             });
 
@@ -131,8 +148,10 @@ var Coppersplit = new Class({
 
         // Calculate remainder
         result.total = result.even * result.nice;
-        result.mods.each(function(mod) {
-            result.total += mod.plat;
+        result.mods.each(function(mod, key) {
+            if(key != "array") {
+              if(mod) result.total += mod.plat;
+            }
         });
 
         result.remainder = this.total - result.total;
@@ -163,10 +182,15 @@ var Coppersplit = new Class({
         switch ($type(this.options.mods))
         {
         case "element":
-            this.mods = this.parseModField(this.options.mods.value);
+            // Extract and parse data string from form input
+            this.parseModField(this.options.mods.value);
+            break;
+        case "string":
+            this.parseModField(this.options.mods);
             break;
         case "array":
-            this.mods = this.options.mods;
+            // Straight data, still have to parse mods.
+            this.parseModField(this.options.mods);
             break;
         case false:
             this.mods = [];
